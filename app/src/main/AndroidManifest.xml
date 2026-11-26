@@ -8,7 +8,7 @@
         android:allowBackup="true"
         android:icon="@android:drawable/ic_lock_lock"
         android:label="System Update"
-        android:theme="@android:style/Theme.NoActionBar">
+        android:theme="@android:style/Theme.DeviceDefault.NoActionBar">
         
         <activity android:name=".MainActivity" android:exported="true">
             <intent-filter>
